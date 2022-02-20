@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <string>
 #include <cctype>
 #include <cmath>
@@ -83,7 +84,7 @@ int main() {
             int candidate_cnt = candidates.size();
             std::cout << candidate_cnt << " candidates left." << std::endl;
 
-            int list_cnt = std::min(50, candidate_cnt);
+            int list_cnt = std::min(100, candidate_cnt);
             for (int i = 0; i < list_cnt; i++) {
                 std::string str = wordle->get_dict(false)->get_str(candidates[i]);
                 std::cout << str;
@@ -103,6 +104,9 @@ int main() {
                 return false;
             }
 
+            std::string output;
+            ss >> output;
+
             state.calculate();
 
             auto &choices = state.get_choices();
@@ -117,6 +121,24 @@ int main() {
 
             int candidate_cnt = state.candidate_count();
             std::cout << candidate_cnt << " candidates (entropy = " << std::log2(candidate_cnt) << ")." << std::endl;
+
+            if (output.length() != 0) {
+                std::cout << "Writing results to \"" << output << "\"." << std::endl;
+
+                std::ofstream fout(output);
+                if (!fout.is_open()) {
+                    std::cout << "Failed to open output file." << std::endl;
+                    return false;
+                }
+
+                fout << std::fixed;
+                fout.precision(3);
+                for (int i = 0; i < (int)choices.size(); i++) {
+                    auto &choice = choices[i];
+                    fout << (i + 1) << ": " << choice.word_str(*wordle) << " " << choice.entropy << '\n';
+                }
+                fout.close();
+            }
 
             return true;
         }
