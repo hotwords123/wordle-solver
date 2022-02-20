@@ -106,6 +106,10 @@ struct GuessAssessment {
     struct Case {
         GuessResult result;
         std::vector<int> answers;
+
+        template <typename T>
+        Case(GuessResult result, T &&answers)
+            : result(result), answers(std::forward<T>(answers)) {}
     };
 
     std::vector<Case> cases;

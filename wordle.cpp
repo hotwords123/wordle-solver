@@ -145,7 +145,7 @@ GuessAssessment WordleState::assess(const std::string &guess) const {
     for (iter_t it = map.begin(); it != map.end(); ++it) {
         int cnt = it->second.size();
         temp += cnt * std::log2(cnt);
-        iters.push_back(it);
+        iters.emplace_back(it);
     }
 
     std::sort(iters.begin(), iters.end(), [](iter_t a, iter_t b) {
@@ -161,7 +161,7 @@ GuessAssessment WordleState::assess(const std::string &guess) const {
 
     assessment.cases.reserve(iters.size());
     for (iter_t it : iters) {
-        assessment.cases.push_back({ it->first, std::move(it->second) });
+        assessment.cases.emplace_back(it->first, std::move(it->second));
     }
 
     return assessment;
